@@ -3,7 +3,7 @@ import { createContext, PropsWithChildren, useContext, useEffect, useState } fro
 type AuthContextType = {
     isAuthenticated: boolean | undefined;
     user: User | null;
-    loading: boolean;
+    isLoading: boolean;
     token: string | null;
     login: (nik: number, tanggal_lahir: string) => void;
     logout: () => void;
@@ -35,12 +35,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthContextProvider = ({ children }: PropsWithChildren) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | undefined>(undefined)
     const [user, setUser] = useState(null)
-    const [loading, setLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
     const [token, setToken] = useState(null)
 
     useEffect(() => {
+        setIsLoading(true)
         setTimeout(() => {
             setIsAuthenticated(true)
+            setIsLoading(false)
         }, 4000)
     }, [])
 
@@ -53,7 +55,7 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
     }
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, user, login, logout, loading, token }}>
+        <AuthContext.Provider value={{ isAuthenticated, user, login, logout, isLoading, token }}>
             {children}
         </AuthContext.Provider>
     )

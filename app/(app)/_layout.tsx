@@ -5,7 +5,7 @@ import { Stack } from 'expo-router';
 export default function RootLayout() {
     console.log("RootLayout (app)");
     return (
-        <Stack>
+        <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="home" />
             <Stack.Screen
                 name="details"
