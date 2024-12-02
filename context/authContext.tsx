@@ -41,13 +41,18 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
     useEffect(() => {
         setIsLoading(true)
         setTimeout(() => {
-            setIsAuthenticated(true)
+            setIsAuthenticated(false)
             setIsLoading(false)
         }, 4000)
     }, [])
 
     const login = (nik: number, tanggal_lahir: string) => {
-
+        setIsLoading(true)
+        setTimeout(() => {
+            setIsAuthenticated(false)
+            console.log(nik, tanggal_lahir)
+            setIsLoading(false)
+        }, 4000)
     }
 
     const logout = () => {
