@@ -2,17 +2,25 @@ import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import React from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
+import LottieView from 'lottie-react-native';
 
 export default function StartUpPage() {
     return (
         <View style={styles.container}>
-            <StatusBar style="auto" />
+            <StatusBar style="light" />
             <LinearGradient
                 // Background Linear Gradient
                 colors={['#7F93E3', '#7B5DB0', '#66166D']}
                 style={styles.background}
             />
-            <ActivityIndicator size={50} color={'#fff'} />
+            <LottieView
+                style={{ width: 300, height: 300 }}
+                autoPlay
+                loop
+                source={require('../assets/lottie/tangan.json')}
+            />
+
+            {/* <ActivityIndicator size={50} color={'#fff'} /> */}
         </View>
     );
 }
