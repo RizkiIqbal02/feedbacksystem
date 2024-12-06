@@ -1,9 +1,15 @@
-import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
+import {createContext, PropsWithChildren, useContext, useEffect, useState} from "react";
+import axiosInstance from "@/utils/axiosInstance";
+import axios from "axios/index";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {router} from "expo-router";
 
 type AuthContextType = {
     isAuthenticated: boolean | undefined;
     user: User | null;
     isLoading: boolean;
+    error: string | null;
+    setError: (error: string | null) => void;
     token: string | null;
     login: (nik: number, tanggal_lahir: string) => void;
     logout: () => void;
@@ -32,27 +38,53 @@ type User = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 
-export const AuthContextProvider = ({ children }: PropsWithChildren) => {
+export const AuthContextProvider = ({children}: PropsWithChildren) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | undefined>(undefined)
     const [user, setUser] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const [token, setToken] = useState(null)
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         setIsLoading(true)
-        setTimeout(() => {
-            setIsAuthenticated(false)
+        const getData = async () => {
+            const token = await AsyncStorage.getItem('token');
+            const userInfo = await AsyncStorage.getItem('userInfo');
+            if (!token || !userInfo) {
+                setIsAuthenticated(false)
+                setIsLoading(false)
+                return
+            }
+            setIsAuthenticated(true)
             setIsLoading(false)
-        }, 4000)
+        };
+        getData()
     }, [])
 
-    const login = (nik: number, tanggal_lahir: string) => {
+    const login = async (nik: number, tanggal_lahir: string) => {
         setIsLoading(true)
-        setTimeout(() => {
-            setIsAuthenticated(false)
-            console.log(nik, tanggal_lahir)
+        try {
+            const response = await axiosInstance.post('/login', {
+                nik,
+                tanggal_lahir
+            })
+
+            const {token, userInfo} = response.data
+
+            await AsyncStorage.setItem('token', token);
+            await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+
+            router.replace('/home')
+
             setIsLoading(false)
-        }, 4000)
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                setError(e.response?.data.message || 'An error occurred');
+            } else {
+                setError('An unexpected error occurred');
+            }
+            setIsLoading(false);
+        }
     }
 
     const logout = () => {
@@ -60,7 +92,7 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
     }
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, user, login, logout, isLoading, token }}>
+        <AuthContext.Provider value={{isAuthenticated, user, login, logout, isLoading, token, error, setError}}>
             {children}
         </AuthContext.Provider>
     )

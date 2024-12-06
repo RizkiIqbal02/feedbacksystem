@@ -1,20 +1,20 @@
-import { View, StyleSheet } from 'react-native';
-import React, { PropsWithChildren } from 'react';
-import { LinearGradient } from 'expo-linear-gradient';
-import { StatusBar } from 'expo-status-bar';
+import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
+import React, {PropsWithChildren} from 'react';
+import {LinearGradient} from 'expo-linear-gradient';
+import {StatusBar} from 'expo-status-bar';
 import LottieView from 'lottie-react-native';
-import { useAuth } from '@/context/authContext';
+import {useAuth} from '@/context/authContext';
 
 interface LayoutProps extends PropsWithChildren {
     style?: any;
 }
 
-export default function Layout({ children, style }: LayoutProps) {
-    const { isLoading } = useAuth();
+export default function Layout({children, style}: LayoutProps) {
+    const {isLoading, error, setError} = useAuth();
 
     return (
         <View style={[styles.container, style]}>
-            <StatusBar style="light" />
+            <StatusBar style="light"/>
 
             {/* Linear Gradient Background */}
             {/* <LinearGradient
@@ -31,6 +31,25 @@ export default function Layout({ children, style }: LayoutProps) {
                         loop
                         source={require('../assets/lottie/tangan.json')}
                     />
+                </View>
+            )}
+
+            {error && (
+                <View style={styles.overlay}>
+                    <View style={styles.errorMessageOverlay}>
+                        <LottieView
+                            style={styles.lottie}
+                            autoPlay
+                            loop
+                            source={require('../assets/lottie/error-kucing.json')}
+                        />
+                        <Text style={{textAlign: 'center', color: '#000', fontSize: 18, fontWeight: 'bold'}}>
+                            {error}
+                        </Text>
+                        <TouchableOpacity onPress={() => setError(null)} style={styles.okButton}>
+                            <Text style={{color: '#fff'}}>Oke deh</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             )}
 
@@ -59,8 +78,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         zIndex: 10, // Ensures overlay is above other elements
     },
+    errorMessageOverlay: {
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        padding: 25,
+        borderRadius: 5,
+    },
     lottie: {
         width: 250,
         height: 250, // Lottie animation size
+    },
+    okButton: {
+        marginTop: 20,
+        padding: 10,
+        backgroundColor: '#7F93E3',
+        borderRadius: 5,
+        elevation: 2
     },
 });
