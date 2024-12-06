@@ -15,7 +15,7 @@ const MainLayout = () => {
       router.replace('/home')
     }
     if (!isAuthenticated) {
-      router.replace('/login')
+      router.replace('/gettingstarted')
     }
   }, [isAuthenticated])
 
