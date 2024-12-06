@@ -44,7 +44,7 @@ export default function LogIn() {
         <Layout style={styles.layout}>
             <SafeAreaView>
                 <View style={{ alignItems: 'center' }}>
-                    <Image style={styles.image} source={require('../assets/images/baca-buku.png')} />
+                    <Image style={styles.image} source={require('../../assets/images/baca-buku.png')} />
                 </View>
                 <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#fff' }}>
                     KOMPLAIN DAN MASUKKAN MASYARAKAT
