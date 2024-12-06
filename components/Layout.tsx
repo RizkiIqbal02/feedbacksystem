@@ -10,7 +10,7 @@ interface LayoutProps extends PropsWithChildren {
 }
 
 export default function Layout({children, style}: LayoutProps) {
-    const {isLoading, error, setError} = useAuth();
+    const {isLoading, error, setError, success, setSuccess} = useAuth();
 
     return (
         <View style={[styles.container, style]}>
@@ -53,6 +53,25 @@ export default function Layout({children, style}: LayoutProps) {
                 </View>
             )}
 
+            {success && (
+                <View style={styles.overlay}>
+                    <View style={styles.errorMessageOverlay}>
+                        <LottieView
+                            style={styles.lottie}
+                            autoPlay
+                            loop
+                            source={require('../assets/lottie/success.json')}
+                        />
+                        <Text style={{textAlign: 'center', color: '#000', fontSize: 18, fontWeight: 'bold'}}>
+                            {success}
+                        </Text>
+                        <TouchableOpacity onPress={() => setSuccess(null)} style={styles.okButton}>
+                            <Text style={{color: '#fff'}}>Oke deh</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )}
+
             {/* Child components */}
             {children}
         </View>
@@ -76,7 +95,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
         justifyContent: 'center',
         alignItems: 'center',
-        zIndex: 10, // Ensures overlay is above other elements
+        zIndex: 9999999999, // Ensures overlay is above other elements
     },
     errorMessageOverlay: {
         alignItems: 'center',
