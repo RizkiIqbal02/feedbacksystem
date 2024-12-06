@@ -8,7 +8,10 @@ type AuthContextType = {
     isAuthenticated: boolean | undefined;
     user: User | null;
     isLoading: boolean;
+    setIsLoading: (isLoading: boolean) => void,
     error: string | null;
+    success: string | null;
+    setSuccess: (success: string | null) => void;
     setError: (error: string | null) => void;
     token: string | null;
     login: (nik: number, tanggal_lahir: string) => void;
@@ -44,6 +47,7 @@ export const AuthContextProvider = ({children}: PropsWithChildren) => {
     const [isLoading, setIsLoading] = useState(false)
     const [token, setToken] = useState(null)
     const [error, setError] = useState<string | null>(null)
+    const [success, setSuccess] = useState<string | null>(null)
 
     useEffect(() => {
         setIsLoading(true)
@@ -87,12 +91,45 @@ export const AuthContextProvider = ({children}: PropsWithChildren) => {
         }
     }
 
-    const logout = () => {
-
+    const logout = async () => {
+        setIsLoading(true)
+        try {
+            const currentToken = await AsyncStorage.getItem('token');
+            await axios.post(process.env.EXPO_PUBLIC_API_URL + '/logout', '', {
+                headers: {
+                    Authorization: `Bearer ${currentToken}`
+                }
+            });
+            await AsyncStorage.removeItem('token');
+            await AsyncStorage.removeItem('userInfo');
+            setIsAuthenticated(false)
+            setIsLoading(false)
+            router.replace('/login')
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                setError(e.response?.data.message || 'An error occurred');
+            } else {
+                setError('An unexpected error occurred');
+            }
+            setIsLoading(false);
+        }
     }
 
     return (
-        <AuthContext.Provider value={{isAuthenticated, user, login, logout, isLoading, token, error, setError}}>
+        <AuthContext.Provider
+            value={{
+                isAuthenticated,
+                user,
+                login,
+                logout,
+                isLoading,
+                token,
+                error,
+                setError,
+                setIsLoading,
+                success,
+                setSuccess
+            }}>
             {children}
         </AuthContext.Provider>
     )
