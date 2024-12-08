@@ -11,6 +11,8 @@ type AuthContextType = {
     setIsLoading: (isLoading: boolean) => void,
     error: string | null;
     success: string | null;
+    confirmation: string | null;
+    setConfirmation: (confirmation: string | null) => void;
     setSuccess: (success: string | null) => void;
     setError: (error: string | null) => void;
     token: string | null;
@@ -48,6 +50,7 @@ export const AuthContextProvider = ({children}: PropsWithChildren) => {
     const [token, setToken] = useState(null)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState<string | null>(null)
+    const [confirmation, setConfirmation] = useState<string | null>(null)
 
     useEffect(() => {
         setIsLoading(true)
@@ -128,7 +131,9 @@ export const AuthContextProvider = ({children}: PropsWithChildren) => {
                 setError,
                 setIsLoading,
                 success,
-                setSuccess
+                setSuccess,
+                confirmation,
+                setConfirmation
             }}>
             {children}
         </AuthContext.Provider>

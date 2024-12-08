@@ -8,6 +8,7 @@ import {Picker} from "@react-native-picker/picker";
 import * as ImagePicker from 'expo-image-picker';
 import axios from "axios/index";
 import {useAuth} from "@/context/authContext";
+import Dialog from "@/components/Dialog";
 
 type User = {
     id: number;
@@ -44,7 +45,7 @@ export default function Home() {
     const [categoryList, setCategoryList] = useState<Category[]>([])
     const [rating, setRating] = useState(1)
     const [komentar, setKomentar] = useState('')
-    const {setError, setIsLoading, setSuccess, logout} = useAuth()
+    const {setError, setIsLoading, setSuccess, logout, confirmation, setConfirmation} = useAuth()
 
     const pickImage = async () => {
         setIsLoading(true)
@@ -183,7 +184,9 @@ export default function Home() {
                                onChangeText={(text) => setKomentar(text)}
                                value={komentar}
                                placeholder={'Tambahkan komentar'}/>
-                    <TouchableOpacity onPress={() => sendData()} style={styles.submitButton}>
+                    <TouchableOpacity
+                        onPress={() => setConfirmation('Apakah anda yakin ingin mengirimkan komentar anda?')}
+                        style={styles.submitButton}>
                         <Text style={styles.submitButtonText}>Kirim</Text>
                     </TouchableOpacity>
                 </View>
@@ -202,6 +205,10 @@ export default function Home() {
                     <Text style={{color: '#fff'}}>Keluar</Text>
                 </TouchableOpacity>
             </View>
+            {confirmation && <Dialog onContinue={() => {
+                sendData()
+                setConfirmation(null)
+            }}/>}
         </Layout>
     );
 }
